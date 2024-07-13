@@ -1,6 +1,7 @@
 package com.berakahnd.cookingreceipe.ui.component.home
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,10 +36,14 @@ import com.berakahnd.cookingreceipe.data.model.CookingModelItem
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeBody(
+    searchText : (String) -> Unit,
+    continentText : (String) -> Unit,
     goToDetailScreenClick : (CookingModelItem) -> Unit,
-    onFavoritemClick : (FavCookingReceipe) -> Unit, datas: CookingModel
+    onFavoritemClick : (FavCookingReceipe) -> Unit,
+    datas: CookingModel
 ) {
-    val dataContinent = datas.distinctBy { it.continent }
+    val dataContinent = listOf("All","European","Asian","American","South American","African")
+        //datas.distinctBy { it.continent }
     val dataHorizontal = datas.asReversed()
     var search by rememberSaveable { mutableStateOf("") }
 
@@ -64,6 +69,7 @@ fun HomeBody(
         value = search,
         onValueChange = {
             search = it
+            searchText(search)
         }
     )
     Text(modifier = Modifier.padding(horizontal = 16.dp),text = "Category", fontSize = 18.sp)
@@ -72,8 +78,10 @@ fun HomeBody(
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
         items(dataContinent){continent ->
-            OutlinedCard( shape = RoundedCornerShape(24.dp)) {
-                Text( modifier = Modifier.padding(16.dp),text = continent.continent)
+            OutlinedCard(modifier = Modifier.clickable {
+                continentText(continent)
+            }, shape = RoundedCornerShape(24.dp)) {
+                Text( modifier = Modifier.padding(16.dp),text = continent)
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.berakahnd.cookingreceipe.ui.screen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -70,6 +71,12 @@ fun HomeScreen(
                     HomeBodySkeleton()
                 }else{
                     HomeBody(
+                        searchText = { search ->
+                            cookingviewModel.searchCookingFromName(search)
+                        },
+                        continentText = { continent ->
+                            cookingviewModel.findCookingByContinent(continent)
+                        },
                         goToDetailScreenClick = { cook ->
                             cookingviewModel.sendCooking(cook)
                             navController.navigate(Screen.DETAILS.name)

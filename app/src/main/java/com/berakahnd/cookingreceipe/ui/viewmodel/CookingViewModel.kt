@@ -45,9 +45,7 @@ class CookingViewModel @Inject constructor(
                     }
                 }
             }
-
         }
-
     }
 
     fun sendCooking(cookingItem : CookingModelItem){

@@ -1,10 +1,11 @@
 package com.berakahnd.cookingreceipe.ui.screen
 
-import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -21,19 +22,23 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.berakahnd.cookingreceipe.ui.component.home.HomeBody
 import com.berakahnd.cookingreceipe.ui.component.home.HomeBodySkeleton
 import com.berakahnd.cookingreceipe.ui.viewmodel.CookingViewModel
 import com.berakahnd.cookingreceipe.ui.viewmodel.FavViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
@@ -66,27 +71,36 @@ fun HomeScreen(
             if(state.isLoading){
                 HomeBodySkeleton()
             }else
-                if(state.error.isNotEmpty()){
-                    //openAlertDialog = true
-                    HomeBodySkeleton()
-                }else{
-                    HomeBody(
-                        searchText = { search ->
-                            cookingviewModel.searchCookingFromName(search)
-                        },
-                        continentText = { continent ->
-                            cookingviewModel.findCookingByContinent(continent)
-                        },
-                        goToDetailScreenClick = { cook ->
-                            cookingviewModel.sendCooking(cook)
-                            navController.navigate(Screen.DETAILS.name)
-                        }, onFavoritemClick = { fav ->
-                            favViewmodel.insertFav(fav)
-                            Toast.makeText(context,"${fav.receipeName} has been added!",Toast.LENGTH_LONG).show()
-                        },
-                        datas = state.data
+            if (state.error.isNotEmpty()) {
+                Column(modifier = modifier
+                    .background(color = Color.Red).fillMaxWidth()
+                ) {
+                    Text(
+                        modifier = modifier.padding(2.dp),
+                        textAlign = TextAlign.Center, color = Color.White,
+                        text = "An error has occurred, check the internet connection. Try again"
                     )
                 }
+                HomeBodySkeleton()
+            }else
+            if (state.error.isEmpty()) {
+                HomeBody(
+                    searchText = { search ->
+                        cookingviewModel.searchCookingFromName(search)
+                    },
+                    continentText = { continent ->
+                        cookingviewModel.findCookingByContinent(continent)
+                    },
+                    goToDetailScreenClick = { cook ->
+                        cookingviewModel.sendCooking(cook)
+                        navController.navigate(Screen.DETAILS.name)
+                    }, onFavoritemClick = { fav ->
+                        favViewmodel.insertFav(fav)
+                        Toast.makeText(context,"${fav.receipeName} has been added!",Toast.LENGTH_LONG).show()
+                    },
+                    datas = state.data
+                )
+            }
         }
     }
     if(openAlertDialog) {
